@@ -1,0 +1,88 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <title>Contoso Sample Web Chat</title>
+    <style>
+      html,
+      body {
+        height: 100%;
+        margin: 0;
+      }
+      body {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+      }
+      h1 {
+        font-size: 16px;
+      }
+      #webchat {
+        width: 100%;
+        height: 500px; /* Adjust height as needed */
+        border: 1px solid #ccc;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="webchat"></div>
+    <script crossorigin="anonymous" src="https://cdn.botframework.com/botframework-webchat/latest/webchat.js"></script>
+    <script>
+      // Extracting the user-provided token endpoint and style options
+      const tokenEndpoint = 'https://8c40032d041be8659e3538508ad528.1a.environment.api.powerplatform.com/powervirtualagents/botsbyschema/cr148_copilot4_9EeA9u/directline/token?api-version=2022-03-01-preview';
+      const styleOptions = {"accent":"#000000","botAvatarBackgroundColor":"#c32222","botAvatarImage":"","botAvatarInitials":"BT","userAvatarImage":""};
+
+      (async function () {
+        // Fetch the token using the provided endpoint
+        const response = await fetch(tokenEndpoint);
+        if (!response.ok) {
+          throw new Error('Failed to retrieve Direct Line token.');
+        }
+        const { token } = await response.json();
+
+        // Create the Direct Line instance
+        const directLine = WebChat.createDirectLine({ token });
+
+        // Render the Web Chat
+        WebChat.renderWebChat({ directLine, styleOptions }, document.getElementById('webchat'));
+      })();
+    </script>
+  <!-- Code injected by live-server -->
+<script>
+	// <![CDATA[  <-- For SVG support
+	if ('WebSocket' in window) {
+		(function () {
+			function refreshCSS() {
+				var sheets = [].slice.call(document.getElementsByTagName("link"));
+				var head = document.getElementsByTagName("head")[0];
+				for (var i = 0; i < sheets.length; ++i) {
+					var elem = sheets[i];
+					var parent = elem.parentElement || head;
+					parent.removeChild(elem);
+					var rel = elem.rel;
+					if (elem.href && typeof rel != "string" || rel.length == 0 || rel.toLowerCase() == "stylesheet") {
+						var url = elem.href.replace(/(&|\?)_cacheOverride=\d+/, '');
+						elem.href = url + (url.indexOf('?') >= 0 ? '&' : '?') + '_cacheOverride=' + (new Date().valueOf());
+					}
+					parent.appendChild(elem);
+				}
+			}
+			var protocol = window.location.protocol === 'http:' ? 'ws://' : 'wss://';
+			var address = protocol + window.location.host + window.location.pathname + '/ws';
+			var socket = new WebSocket(address);
+			socket.onmessage = function (msg) {
+				if (msg.data == 'reload') window.location.reload();
+				else if (msg.data == 'refreshcss') refreshCSS();
+			};
+			if (sessionStorage && !sessionStorage.getItem('IsThisFirstTime_Log_From_LiveServer')) {
+				console.log('Live reload enabled.');
+				sessionStorage.setItem('IsThisFirstTime_Log_From_LiveServer', true);
+			}
+		})();
+	}
+	else {
+		console.error('Upgrade your browser. This Browser is NOT supported WebSocket for Live-Reloading.');
+	}
+	// ]]>
+</script>
+</body>
+</html>

@@ -1,0 +1,134 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <title>Web Chat Customizer</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        margin: 0;
+        padding: 0;
+        display: flex;
+        height: 100vh;
+      }
+      #left-panel {
+        width: 30%;
+        padding: 20px;
+        background-color: #f0f0f0;
+        box-sizing: border-box;
+        border-right: 2px solid #ccc;
+      }
+      #right-panel {
+        width: 70%;
+        padding: 20px;
+        box-sizing: border-box;
+      }
+      label {
+        display: block;
+        margin: 10px 0 5px;
+      }
+      input {
+        width: 100%;
+        padding: 8px;
+        margin-bottom: 15px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+      }
+      button {
+        padding: 10px 20px;
+        background-color: #0078D4;
+        color: white;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+      }
+      button:hover {
+        background-color: #005a9e;
+      }
+      iframe {
+        width: 100%;
+        height: 100%;
+        border: none;
+      }
+    </style>
+    <script src="https://cdn.jsdelivr.net/npm/lodash@4.17.21/lodash.min.js"></script>
+  </head>
+  <body>
+    <!-- Left side: Input Form -->
+    <div id="left-panel">
+      <h1>Customize Web Chat</h1>
+
+      <label for="tokenEndpoint">Token Endpoint</label>
+      <input type="text" id="tokenEndpoint" placeholder="Enter token endpoint URL">
+
+      <h2>Style Options</h2>
+
+      <label for="accent">Accent Color</label>
+      <input type="color" id="accent" placeholder="e.g. #00809d">
+
+      <label for="botAvatarBackgroundColor">Bot Avatar Background Color</label>
+      <input type="color" id="botAvatarBackgroundColor" placeholder="e.g. #FFFFFF">
+
+      <label for="bubbleBackground">Bot Avatar Background Color</label>
+      <input type="color" id="bubbleBackground" placeholder="e.g. #00809d">
+
+      <label for="botAvatarImage">Bot Avatar Image URL</label>
+      <input type="text" id="botAvatarImage" placeholder="Enter URL for bot avatar image">
+
+      <label for="botAvatarInitials">Bot Avatar Initials</label>
+      <input type="text" id="botAvatarInitials" placeholder="e.g. BT">
+
+      <label for="userAvatarImage">User Avatar Image URL</label>
+      <input type="text" id="userAvatarImage" placeholder="Enter URL for user avatar image">
+
+      <button onclick="renderHTML()">Submit</button>
+    </div>
+
+    <!-- Right side: Rendered HTML -->
+    <div id="right-panel">
+      <iframe id="outputFrame"></iframe>
+    </div>
+
+    <!-- Script to handle form submission and rendering -->
+    <script>
+      async function loadTemplate(url) {
+        const response = await fetch(url);
+        return response.text();
+      }
+
+      window.renderHTML = async function() {
+        // Load template from external file
+        const template = await loadTemplate('template.html');
+
+        // Use block scope variables to prevent redeclaration
+        let endpoint = document.getElementById('tokenEndpoint').value || 'https://8c40032d041be8659e3538508ad528.1a.environment.api.powerplatform.com/powervirtualagents/botsbyschema/cr148_copilot4_9EeA9u/directline/token?api-version=2022-03-01-preview';
+        
+        // Get individual style options
+        const options = {
+          accent: document.getElementById('accent').value || '#00809d',
+          botAvatarBackgroundColor: document.getElementById('botAvatarBackgroundColor').value || '#FFFFFF',
+          botAvatarImage: document.getElementById('botAvatarImage').value || '',
+          botAvatarInitials: document.getElementById('botAvatarInitials').value || 'BT',
+          userAvatarImage: document.getElementById('userAvatarImage').value || '',
+          bubbleBackground: document.getElementById('bubbleBackground').value || '#00809d'
+        };
+
+        // Compile the Lodash template
+        const compiledHTML = _.template(template)({
+          token_endpoint: endpoint,
+          styleOptions: options
+        });
+
+        console.log(compiledHTML);
+
+        // Get the iframe where we will render the output
+        const iframe = document.getElementById('outputFrame');
+        const iframeDoc = iframe.contentWindow.document;
+
+        // Write the compiled HTML to the iframe
+        iframeDoc.open();
+        iframeDoc.write(compiledHTML);
+        iframeDoc.close();
+      };
+    </script>
+  </body>
+</html>
